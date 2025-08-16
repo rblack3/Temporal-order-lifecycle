@@ -1,0 +1,29 @@
+version: "3.8"
+services:
+  temporal:
+    image: temporalio/auto-setup:latest
+    ports: ["7233:7233", "8233:8233"]
+    environment:
+      - DB=postgresql
+      - DB_PORT=5432
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PWD=${POSTGRES_PASSWORD}
+      - POSTGRES_SEEDS=temporal-db
+    depends_on:
+      - temporal-db
+    networks:
+      - temporal-network
+  temporal-db:
+    image: postgres:14
+    ports: ["5432:5432"]
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+    volumes:
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - temporal-network
+networks:
+  temporal-network:
+    driver: bridge

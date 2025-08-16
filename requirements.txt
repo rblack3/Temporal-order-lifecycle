@@ -1,0 +1,6 @@
+temporalio
+asyncpg
+sqlalchemy
+typer[all]
+python-dotenv
+structlog
