@@ -4,7 +4,7 @@ services:
     image: temporalio/auto-setup:latest
     ports: ["7233:7233", "8233:8233"]
     environment:
-      - DB=postgresql
+      - DB=postgres12
       - DB_PORT=5432
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PWD=${POSTGRES_PASSWORD}
