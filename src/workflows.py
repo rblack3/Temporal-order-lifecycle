@@ -81,7 +81,7 @@ class OrderWorkflow:
     async def _handle_cancellation(self, reason: str):
         self._status = f"CANCELLING: {reason}"
         
-        await workflow.execute_activity(activities.process_cancellation, args=[workflow.info.workflow_id, reason], start_to_close_timeout=timedelta(seconds=10))
+        await workflow.execute_activity(activities.process_cancellation, args=[workflow.info().workflow_id, reason], start_to_close_timeout=timedelta(seconds=10))
         
         self._status = "CANCELLED"
         

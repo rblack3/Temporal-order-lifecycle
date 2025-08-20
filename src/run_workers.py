@@ -1,4 +1,6 @@
-import asyncio, structlog
+import asyncio, structlog, logging
+import structlog.stdlib
+import structlog.contextvars
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -31,9 +33,17 @@ async def main():
     await asyncio.gather(order_worker.run(), shipping_worker.run())
 
 if __name__ == "__main__":
+    logging.basicConfig(level=logging.INFO)
     structlog.configure(
-        processors=[structlog.processors.add_log_level, structlog.processors.TimeStamper(fmt="iso"), structlog.processors.JSONRenderer()], 
-        logger_factory=structlog.PrintLoggerFactory()
+        processors=[
+            structlog.processors.add_log_level, 
+            structlog.processors.TimeStamper(fmt="iso"), 
+            structlog.contextvars.merge_contextvars,
+            structlog.processors.JSONRenderer(),
+        ], 
+        logger_factory=structlog.stdlib.LoggerFactory(),
+        wrapper_class=structlog.stdlib.BoundLogger,
+        cache_logger_on_first_use=True,
     )
     
     try: 

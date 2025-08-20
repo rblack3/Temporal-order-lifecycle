@@ -25,7 +25,7 @@ def start_workflow(order_id: str = typer.Option(lambda: f"order-{uuid.uuid4().he
             args=[order_id, payment_id], 
             id=order_id, 
             task_queue=ORDER_TASK_QUEUE, 
-            execution_timeout=timedelta(seconds=15)#300 for testing purposes)
+            execution_timeout=timedelta(seconds=300)#300 for testing purposes)
         )
     asyncio.run(_start())
 

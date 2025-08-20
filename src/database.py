@@ -17,7 +17,11 @@ class DatabaseRepository:
 
     async def create_order(self, order_id: str, address: str):
         async with self._pool.acquire() as c: 
-            await c.execute("INSERT INTO orders (id, state, shipping_address_json) VALUES ($1, 'CREATED', $2)", order_id, address)
+            await c.execute(
+                "INSERT INTO orders (id, state, shipping_address_json) VALUES ($1, 'CREATED', $2) ON CONFLICT (id) DO NOTHING", 
+                order_id, 
+                address
+            )
     
     async def update_order_state(self, order_id: str, state: str):
         async with self._pool.acquire() as c: 
@@ -25,12 +29,17 @@ class DatabaseRepository:
     
     async def upsert_payment(self, payment_id: str, order_id: str, amount: float) -> str:
         async with self._pool.acquire() as c:
-            r = await c.execute("INSERT INTO payments (payment_id, order_id, status, amount) VALUES ($1, $2, 'PENDING', $3) ON CONFLICT (payment_id) DO NOTHING RETURNING payment_id", payment_id, order_id, amount)
+            r = await c.execute(
+                "INSERT INTO payments (payment_id, order_id, status, amount) VALUES ($1, $2, 'PENDING', $3) ON CONFLICT (payment_id) DO NOTHING RETURNING payment_id", 
+                payment_id, 
+                order_id, 
+                amount
+            )
             return "INSERTED" if r else "EXISTED"
     
     async def update_payment_status(self, payment_id: str, status: str):
         async with self._pool.acquire() as c: 
             await c.execute("UPDATE payments SET status = $1, updated_at = CURRENT_TIMESTAMP WHERE payment_id = $2", status, payment_id)
 
-db_dsn = f"postgresql://{os.getenv('POSTGRES_USER')}:{os.getenv('POSTGRES_PASSWORD')}@localhost:5432/{os.getenv('POSTGRES_DB')}"
+db_dsn = f"postgresql://{os.getenv('POSTGRES_USER')}:{os.getenv('POSTGRES_PASSWORD')}@localhost:5432/{os.getenv('POSTGRES_APP_DB')}"
 db_repo = DatabaseRepository(dsn=db_dsn)
