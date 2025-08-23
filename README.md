@@ -84,7 +84,8 @@ Use this terminal to start, query, and send signals to your workflows.
     ```
 * Query the workflow to see that its final status is `CANCELLED`.
 
-**3. Resilience to Failure:** This test validates the system's ability to automatically handle and recover from failures using Temporal's retry mechanisms.
+### **3. Resilience to Failure:** 
+This test validates the system's ability to automatically handle and recover from failures using Temporal's retry mechanisms.
 
 * 1. Ensure the infrastructure and worker are running (as in Steps 1 & 2 of Test 1).
 
