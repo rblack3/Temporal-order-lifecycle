@@ -52,7 +52,7 @@ The workers are the background processes that execute your code. They will run i
 **Terminal 2: Use the CLI to Interact with Workflows**
 Use this terminal to start, query, and send signals to your workflows.
 
-#### **A Full Manual Test Plan**
+#### **Manual Test Plan**
 
 **1. The Happy Path:**
 
@@ -84,30 +84,31 @@ Use this terminal to start, query, and send signals to your workflows.
     ```
 * Query the workflow to see that its final status is `CANCELLED`.
 
-**3. Using the Temporal Web UI:**
+**3. Resilience to Failure:** This test validates the system's ability to automatically handle and recover from failures using Temporal's retry mechanisms.
 
-* Open your browser to `http://localhost:8233`.
-* Click on any of your workflow IDs.
-* Explore the "Event History" to see a complete audit trail of every activity attempt, retry, timeout, and signal.
+* 1. Ensure the infrastructure and worker are running (as in Steps 1 & 2 of Test 1).
+
+* 2. Trigger a new workflow but delay approval:
+    ```bash
+        python3 -m src.cli start-workflow
+    ```
+* 3. Observe Fault Tolerance in Worker Logs:
+   - Watch the logs for the ```receive_order``` and ```validate_order``` activities.
+   - Due to the ```flaky_call()``` function, you will observe some attempts fail with RuntimeError and others get stuck in a long sleep.
+   - This demonstrates Temporal's automatic retry mechanism in action as it attempts to overcome these simulated failures.
+
+* 4. After observing several retries, complete the workflow:
+    ```bash
+        python3 -m src.cli signal <ORDER_ID> approve
+    ```
+
+* 5. Verify Recovery and Idempotency:
+   - Despite the initial failures, the workflow should eventually complete successfully.
+
+** Expected Outcome for Both Tests: ** All workflows should conclude with the order in a ```COMPLETED``` or ```DISPATCHED``` state, demonstrating that the orchestration is both reliable and resilient to intermediate failures.
 
 ### Database & Persistence Rationale
 
 -   **`orders` table**: Stores the high-level state of the order (`CREATED`, `VALIDATED`, `SHIPPED`, etc.).
 -   **`payments` table**: Contains payment information. The `payment_id` is the `PRIMARY KEY`.
     -   **Idempotency**: The `charge_payment` activity first attempts an `INSERT ... ON CONFLICT DO NOTHING`. If the `payment_id` already exists, the database does nothing. This prevents double charges, even if the activity is retried multiple times due to timeouts or failures.
--   **`workflow_events` table**: An audit log that captures a detailed history of significant events throughout the workflow's execution. For debugging purposes.
-
-### Automated Tests
-
-The project includes a basic structure for automated integration tests using `pytest` and Temporal's testing framework.
-
-**1. Setup for Testing:**
-```bash
-python3 -m pip install pytest pytest-asyncio
-```
-
-**2. Run the Tests:**
-```bash
-pytest
-```
-Pytest will automatically discover and run the test files in the tests/ directory. You can add more tests there to cover all scenarios.
