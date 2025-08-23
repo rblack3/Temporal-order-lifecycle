@@ -95,6 +95,7 @@ Use this terminal to start, query, and send signals to your workflows.
 -   **`orders` table**: Stores the high-level state of the order (`CREATED`, `VALIDATED`, `SHIPPED`, etc.).
 -   **`payments` table**: Contains payment information. The `payment_id` is the `PRIMARY KEY`.
     -   **Idempotency**: The `charge_payment` activity first attempts an `INSERT ... ON CONFLICT DO NOTHING`. If the `payment_id` already exists, the database does nothing. This prevents double charges, even if the activity is retried multiple times due to timeouts or failures.
+-   **`workflow_events` table**: An audit log that captures a detailed history of significant events throughout the workflow's execution. For debugging purposes.
 
 ### Automated Tests
 
