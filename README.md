@@ -38,7 +38,7 @@ This project implements a durable Order Lifecycle orchestration using the Tempor
     python3 -m pip install -r requirements.txt
     ```
 
-### 2. Run and Test the Application
+### 2. Run the Application
 
 You will need two separate terminal windows open.
 
@@ -52,7 +52,7 @@ The workers are the background processes that execute your code. They will run i
 **Terminal 2: Use the CLI to Interact with Workflows**
 Use this terminal to start, query, and send signals to your workflows.
 
-#### **Manual Test Plan**
+### **Manual Testing**
 
 **1. The Happy Path:**
 
