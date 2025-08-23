@@ -1,7 +1,3 @@
-CREATE DATABASE orders_db;
-
-\c orders_db;
-
 CREATE TABLE orders (
 	id VARCHAR(255) PRIMARY KEY, 
 	state VARCHAR(255) NOT NULL, -- Changed to 255 characters for longer state msgs

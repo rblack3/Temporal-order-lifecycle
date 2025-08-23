@@ -27,7 +27,8 @@ class DatabaseRepository:
         async with self._pool.acquire() as c: 
             await c.execute("UPDATE orders SET state = $1, updated_at = CURRENT_TIMESTAMP WHERE id = $2", state, order_id)
     
-    async def upsert_payment(self, payment_id: str, order_id: str, amount: float) -> str:
+    # Both updates and inserts - because if the payment already exists, we don't want to overwrite it
+    async def upsert_payment(self, payment_id: str, order_id: str, amount: float):
         async with self._pool.acquire() as c:
             r = await c.execute(
                 "INSERT INTO payments (payment_id, order_id, status, amount) VALUES ($1, $2, 'PENDING', $3) ON CONFLICT (payment_id) DO NOTHING RETURNING payment_id", 
@@ -41,5 +42,6 @@ class DatabaseRepository:
         async with self._pool.acquire() as c: 
             await c.execute("UPDATE payments SET status = $1, updated_at = CURRENT_TIMESTAMP WHERE payment_id = $2", status, payment_id)
 
-db_dsn = f"postgresql://{os.getenv('POSTGRES_USER')}:{os.getenv('POSTGRES_PASSWORD')}@localhost:5432/{os.getenv('POSTGRES_APP_DB')}"
+# Data Source Name
+db_dsn = f"postgresql://{os.getenv('POSTGRES_USER')}:{os.getenv('POSTGRES_PASSWORD')}@localhost:5432/{os.getenv('POSTGRES_DB')}"
 db_repo = DatabaseRepository(dsn=db_dsn)
