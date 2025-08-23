@@ -52,9 +52,9 @@ The workers are the background processes that execute your code. They will run i
 **Terminal 2: Use the CLI to Interact with Workflows**
 Use this terminal to start, query, and send signals to your workflows.
 
-### **Manual Testing**
+## Manual Testing
 
-**1. The Happy Path:**
+### **1. The Happy Path:**
 
 * **Start a workflow:**
     ```bash
@@ -75,7 +75,7 @@ Use this terminal to start, query, and send signals to your workflows.
 
 * **Observe completion:** Query the status again every few seconds. You will see the status change until the `Workflow Status` is `COMPLETED`. Your worker terminal will show logs of the activities being processed.
 
-**2. Test Cancellation:**
+### **2. Test Cancellation:**
 
 * Start a new workflow.
 * Before the approval step, send a `cancel` signal instead:
