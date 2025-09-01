@@ -1,4 +1,4 @@
-# Temporal Order Workflow Assessment
+# Temporal Order Workflow Demonstration
 
 This project implements a durable Order Lifecycle orchestration using the Temporal Python SDK, demonstrating core concepts like parent/child workflows, signals, timers, retries, and task-queue isolation.
 
